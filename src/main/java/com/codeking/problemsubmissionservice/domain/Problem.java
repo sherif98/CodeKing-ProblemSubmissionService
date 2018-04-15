@@ -7,6 +7,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
+
+/**
+ * Problem Entity specifies the problem attributes.
+ */
 @Document(collection = "problem")
 @Getter
 @Setter

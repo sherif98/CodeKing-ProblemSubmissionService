@@ -5,6 +5,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Submission specifies the problem after it has been submitted and evaluated.
+ * used as an entity to be stored in database.
+ */
 @Document(collection = "submission")
 @Getter
 @Setter

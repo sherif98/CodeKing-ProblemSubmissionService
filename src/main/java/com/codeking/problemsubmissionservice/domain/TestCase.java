@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * represents a single test case.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

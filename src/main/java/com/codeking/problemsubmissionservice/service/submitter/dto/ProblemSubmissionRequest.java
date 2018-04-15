@@ -1,4 +1,4 @@
-package com.codeking.problemsubmissionservice.dto;
+package com.codeking.problemsubmissionservice.service.submitter.dto;
 
 import com.codeking.problemsubmissionservice.domain.ProgrammingLanguage;
 import lombok.Builder;
@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * problem submission service request.
+ */
 @Getter
 @Setter
 @Builder
@@ -14,5 +17,5 @@ public class ProblemSubmissionRequest {
 
     private String code;
     private ProgrammingLanguage programmingLanguage;
-    private String userId;
+    private String problemId;
 }

@@ -3,7 +3,9 @@ package com.codeking.problemsubmissionservice.dto;
 import com.codeking.problemsubmissionservice.domain.SubmissionStatus;
 import lombok.*;
 
-
+/**
+ * dto represents a problem submitted and evaluated by a user.
+ */
 @Getter
 @Setter
 @Builder
