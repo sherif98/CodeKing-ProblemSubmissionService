@@ -11,7 +11,15 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationResult compile(CompilationRequest compilationRequest) {
-        return CompilationResult.builder().build();
+        CompilationTemplate compilationTemplate;
+        switch (compilationRequest.getProgrammingLanguage()) {
+            case JAVA:
+                compilationTemplate = new JavaCompilation();
+                break;
+            default:
+                throw new AssertionError("Unknown Programming Language " + compilationRequest.getProgrammingLanguage());
+        }
+        return compilationTemplate.compile(compilationRequest.getCode());
     }
 
 }

@@ -78,12 +78,20 @@
             <version>1.1-groovy-2.4</version>
             <scope>test</scope>
         </dependency>
-        <!-- Optional dependencies for using Spock -->
-        <!--<dependency> &lt;!&ndash; use a specific Groovy version rather than the one specified by spock-core &ndash;&gt;-->
-            <!--<groupId>org.codehaus.groovy</groupId>-->
-            <!--<artifactId>groovy-all</artifactId>-->
-            <!--<version>2.4.13</version>-->
-        <!--</dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-io -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.2</version>
+        </dependency>
 
 
     </dependencies>
