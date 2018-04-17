@@ -28,4 +28,6 @@ public class Submission {
     private String userId;
 
     private String problemTitle;
+
+    private ProgrammingLanguage programmingLanguage;
 }
