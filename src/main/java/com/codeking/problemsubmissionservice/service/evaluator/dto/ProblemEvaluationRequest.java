@@ -1,5 +1,6 @@
 package com.codeking.problemsubmissionservice.service.evaluator.dto;
 
+import com.codeking.problemsubmissionservice.domain.Problem;
 import com.codeking.problemsubmissionservice.domain.ProgrammingLanguage;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,5 +18,5 @@ public class ProblemEvaluationRequest {
 
     private Path executableProgramPath;
     private ProgrammingLanguage programmingLanguage;
-    private String problemId;
+    private Problem problem;
 }

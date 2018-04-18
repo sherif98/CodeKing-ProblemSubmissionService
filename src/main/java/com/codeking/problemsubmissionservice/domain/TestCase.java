@@ -3,8 +3,6 @@ package com.codeking.problemsubmissionservice.domain;
 
 import lombok.*;
 
-import java.util.List;
-
 /**
  * represents a single test case.
  */
@@ -13,8 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class TestCase {
 
-    private List<String> input;
-    private List<String> output;
+    private String input;
+    private String output;
 }

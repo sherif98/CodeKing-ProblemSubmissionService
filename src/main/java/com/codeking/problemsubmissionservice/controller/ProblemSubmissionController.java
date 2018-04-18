@@ -3,10 +3,13 @@ package com.codeking.problemsubmissionservice.controller;
 
 import com.codeking.problemsubmissionservice.controller.dto.ProblemSubmission;
 import com.codeking.problemsubmissionservice.controller.dto.UserSubmission;
+import com.codeking.problemsubmissionservice.domain.Problem;
 import com.codeking.problemsubmissionservice.domain.Submission;
 import com.codeking.problemsubmissionservice.event.api.EventDispatcher;
 import com.codeking.problemsubmissionservice.event.dto.ProblemEvaluatedEvent;
+import com.codeking.problemsubmissionservice.exception.ProblemNotFoundException;
 import com.codeking.problemsubmissionservice.exception.SubmissionNotFoundException;
+import com.codeking.problemsubmissionservice.repository.ProblemRepository;
 import com.codeking.problemsubmissionservice.repository.SubmissionRepository;
 import com.codeking.problemsubmissionservice.service.submitter.api.ProblemSubmissionService;
 import com.codeking.problemsubmissionservice.service.submitter.dto.ProblemSubmissionRequest;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -23,6 +27,9 @@ public class ProblemSubmissionController {
 
     @Autowired
     private SubmissionRepository submissionRepository;
+
+    @Autowired
+    private ProblemRepository problemRepository;
 
     @Autowired
     private ProblemSubmissionService problemSubmissionService;
@@ -38,19 +45,19 @@ public class ProblemSubmissionController {
 
     @PostMapping
     public ProblemSubmissionResult submitProblem(@RequestBody ProblemSubmission problemSubmission) {
-        ProblemSubmissionResult problemSubmissionResult = submit(problemSubmission);
 
-        ProblemEvaluatedEvent problemEvaluatedEvent = ProblemEvaluatedEvent.builder()
-                .userId(problemSubmission.getUserId())
-                .problemId(problemSubmission.getProblemId())
-                .submissionStatus(problemSubmissionResult.getSubmissionStatus())
-                .programmingLanguage(problemSubmission.getProgrammingLanguage())
-                .build();
+        Optional<Problem> problemEntity = problemRepository.findById(problemSubmission.getProblemId());
+        problemEntity.orElseThrow(() -> new ProblemNotFoundException(problemSubmission.getProblemId()));
 
-        eventDispatcher.dispatchProblemEvaluatedEvent(problemEvaluatedEvent);
+        Problem problem = problemEntity.get();
+        ProblemSubmissionResult problemSubmissionResult = submit(problemSubmission, problem);
+
+        dispatchProblemEvaluatedEvent(problemSubmission, problemSubmissionResult);
+        persistSubmission(problemSubmission, problemSubmissionResult, problem.getProblemTitle());
 
         return problemSubmissionResult;
     }
+
 
     @GetMapping("/user/{userId}")
     public List<UserSubmission> getUserSubmissions(@PathVariable("userId") String userId) {
@@ -69,13 +76,35 @@ public class ProblemSubmissionController {
 
     }
 
-    private ProblemSubmissionResult submit(ProblemSubmission problemSubmission) {
+    private ProblemSubmissionResult submit(ProblemSubmission problemSubmission, Problem problem) {
         ProblemSubmissionRequest problemSubmissionRequest = ProblemSubmissionRequest.builder()
-                .problemId(problemSubmission.getProblemId())
+                .problem(problem)
                 .code(problemSubmission.getCode())
                 .programmingLanguage(problemSubmission.getProgrammingLanguage())
                 .build();
 
         return problemSubmissionService.submitProblem(problemSubmissionRequest);
+    }
+
+    private void dispatchProblemEvaluatedEvent(ProblemSubmission problemSubmission, ProblemSubmissionResult problemSubmissionResult) {
+        ProblemEvaluatedEvent problemEvaluatedEvent = ProblemEvaluatedEvent.builder()
+                .userId(problemSubmission.getUserId())
+                .problemId(problemSubmission.getProblemId())
+                .submissionStatus(problemSubmissionResult.getSubmissionStatus())
+                .programmingLanguage(problemSubmission.getProgrammingLanguage())
+                .build();
+
+        eventDispatcher.dispatchProblemEvaluatedEvent(problemEvaluatedEvent);
+    }
+
+    private void persistSubmission(ProblemSubmission problemSubmission,
+                                   ProblemSubmissionResult problemSubmissionResult, String problemTitle) {
+        Submission submission = Submission.builder()
+                .code(problemSubmission.getCode())
+                .programmingLanguage(problemSubmission.getProgrammingLanguage())
+                .submissionStatus(problemSubmissionResult.getSubmissionStatus())
+                .problemTitle(problemTitle)
+                .build();
+        submissionRepository.save(submission);
     }
 }
