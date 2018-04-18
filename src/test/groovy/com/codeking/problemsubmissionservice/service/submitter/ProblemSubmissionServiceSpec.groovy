@@ -103,7 +103,29 @@ class ProblemSubmissionServiceSpec extends Specification {
         result.submissionError.isEmpty()
     }
 
-    def "should return run time error and exector error when a problem occurs in running one of the tests"() {
+    def "should return wrong answer when one of the tests produces wrong answer"() {
+        given: "stubbed services"
+        def compilationService = Stub(CompilationService)
+        compilationService.compile(_) >> CompilationResult.builder()
+                .compilationStatus(CompilationStatus.COMPILATION_SUCCESS)
+                .build()
+        def evaluationService = Stub(ProblemEvaluationService)
+        evaluationService.evaluateProblem(_) >> ProblemEvaluationResult.builder()
+                .problemEvaluationStatus(ProblemEvaluationStatus.WRONG_ANSWER)
+                .executorErrorOutput("")
+                .build()
+        and: "submission service"
+        def submissionService = new ProblemSubmissionServiceImpl(compilationService, evaluationService)
+        and: "request"
+        def request = ProblemSubmissionRequest.builder().build()
+        when:
+        def result = submissionService.submitProblem(request)
+        then:
+        result.submissionStatus == SubmissionStatus.WRONG_ANSWER
+        result.submissionError.isEmpty()
+    }
+
+    def "should return run time error and executor error when a problem occurs in running one of the tests"() {
         given: "stubbed services"
         def executorError = "error happened while running"
         def compilationService = Stub(CompilationService)

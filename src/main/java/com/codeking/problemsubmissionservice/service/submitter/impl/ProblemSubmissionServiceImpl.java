@@ -12,6 +12,8 @@ import com.codeking.problemsubmissionservice.service.evaluator.dto.ProblemEvalua
 import com.codeking.problemsubmissionservice.service.submitter.api.ProblemSubmissionService;
 import com.codeking.problemsubmissionservice.service.submitter.dto.ProblemSubmissionRequest;
 import com.codeking.problemsubmissionservice.service.submitter.dto.ProblemSubmissionResult;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ import java.nio.file.Path;
 
 @Service
 @Log4j2
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProblemSubmissionServiceImpl implements ProblemSubmissionService {
 
 
