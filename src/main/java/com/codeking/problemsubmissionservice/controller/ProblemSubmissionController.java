@@ -17,6 +17,7 @@ import com.codeking.problemsubmissionservice.service.submitter.dto.ProblemSubmis
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -50,8 +51,11 @@ public class ProblemSubmissionController {
         problemEntity.orElseThrow(() -> new ProblemNotFoundException(problemSubmission.getProblemId()));
 
         Problem problem = problemEntity.get();
-        ProblemSubmissionResult problemSubmissionResult = submit(problemSubmission, problem);
 
+        String decodedCode = decodeCode(problemSubmission.getCode());
+        problemSubmission.setCode(decodedCode);
+
+        ProblemSubmissionResult problemSubmissionResult = submit(problemSubmission, problem);
         dispatchProblemEvaluatedEvent(problemSubmission, problemSubmissionResult);
         persistSubmission(problemSubmission, problemSubmissionResult, problem.getProblemTitle());
 
@@ -104,7 +108,13 @@ public class ProblemSubmissionController {
                 .programmingLanguage(problemSubmission.getProgrammingLanguage())
                 .submissionStatus(problemSubmissionResult.getSubmissionStatus())
                 .problemTitle(problemTitle)
+                .userId(problemSubmission.getUserId())
                 .build();
         submissionRepository.save(submission);
+    }
+
+    private String decodeCode(String code) {
+        byte[] decode = Base64.getDecoder().decode(code);
+        return new String(decode);
     }
 }

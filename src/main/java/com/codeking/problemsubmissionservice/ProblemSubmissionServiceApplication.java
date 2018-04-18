@@ -6,9 +6,11 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
 @EnableEurekaClient
-public class ProblemsubmissionserviceApplication {
+public class ProblemSubmissionServiceApplication {
+
 
     public static void main(String[] args) {
-        SpringApplication.run(ProblemsubmissionserviceApplication.class, args);
+        SpringApplication.run(ProblemSubmissionServiceApplication.class, args);
     }
+
 }
