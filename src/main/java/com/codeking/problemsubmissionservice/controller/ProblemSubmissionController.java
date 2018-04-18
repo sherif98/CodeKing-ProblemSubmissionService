@@ -1,8 +1,11 @@
 package com.codeking.problemsubmissionservice.controller;
 
 
+import com.codeking.problemsubmissionservice.controller.dto.ProblemSubmission;
+import com.codeking.problemsubmissionservice.controller.dto.UserSubmission;
 import com.codeking.problemsubmissionservice.domain.Submission;
-import com.codeking.problemsubmissionservice.dto.UserSubmission;
+import com.codeking.problemsubmissionservice.event.api.EventDispatcher;
+import com.codeking.problemsubmissionservice.event.dto.ProblemEvaluatedEvent;
 import com.codeking.problemsubmissionservice.exception.SubmissionNotFoundException;
 import com.codeking.problemsubmissionservice.repository.SubmissionRepository;
 import com.codeking.problemsubmissionservice.service.submitter.api.ProblemSubmissionService;
@@ -24,6 +27,9 @@ public class ProblemSubmissionController {
     @Autowired
     private ProblemSubmissionService problemSubmissionService;
 
+    @Autowired
+    private EventDispatcher eventDispatcher;
+
     @GetMapping("{submissionId}")
     public Submission getSubmissionById(@PathVariable("submissionId") String submissionId) {
         return submissionRepository.findById(submissionId)
@@ -31,9 +37,19 @@ public class ProblemSubmissionController {
     }
 
     @PostMapping
-    public ProblemSubmissionResult submitProblem(@RequestBody ProblemSubmissionRequest problemSubmissionRequest) {
-        //TODO sent an event indicating that a new submission is available.
-        return problemSubmissionService.submitProblem(problemSubmissionRequest);
+    public ProblemSubmissionResult submitProblem(@RequestBody ProblemSubmission problemSubmission) {
+        ProblemSubmissionResult problemSubmissionResult = submit(problemSubmission);
+
+        ProblemEvaluatedEvent problemEvaluatedEvent = ProblemEvaluatedEvent.builder()
+                .userId(problemSubmission.getUserId())
+                .problemId(problemSubmission.getProblemId())
+                .submissionStatus(problemSubmissionResult.getSubmissionStatus())
+                .programmingLanguage(problemSubmission.getProgrammingLanguage())
+                .build();
+
+        eventDispatcher.dispatchProblemEvaluatedEvent(problemEvaluatedEvent);
+
+        return problemSubmissionResult;
     }
 
     @GetMapping("/user/{userId}")
@@ -51,5 +67,15 @@ public class ProblemSubmissionController {
                 .submissionId(submission.getSubmissionId())
                 .build();
 
+    }
+
+    private ProblemSubmissionResult submit(ProblemSubmission problemSubmission) {
+        ProblemSubmissionRequest problemSubmissionRequest = ProblemSubmissionRequest.builder()
+                .problemId(problemSubmission.getProblemId())
+                .code(problemSubmission.getCode())
+                .programmingLanguage(problemSubmission.getProgrammingLanguage())
+                .build();
+
+        return problemSubmissionService.submitProblem(problemSubmissionRequest);
     }
 }
