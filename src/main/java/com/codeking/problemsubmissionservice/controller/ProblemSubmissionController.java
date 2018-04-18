@@ -5,8 +5,8 @@ import com.codeking.problemsubmissionservice.controller.dto.ProblemSubmission;
 import com.codeking.problemsubmissionservice.controller.dto.UserSubmission;
 import com.codeking.problemsubmissionservice.domain.Problem;
 import com.codeking.problemsubmissionservice.domain.Submission;
-import com.codeking.problemsubmissionservice.event.send.api.EventDispatcher;
 import com.codeking.problemsubmissionservice.event.dto.ProblemEvaluatedEvent;
+import com.codeking.problemsubmissionservice.event.send.api.EventDispatcher;
 import com.codeking.problemsubmissionservice.exception.ProblemNotFoundException;
 import com.codeking.problemsubmissionservice.exception.SubmissionNotFoundException;
 import com.codeking.problemsubmissionservice.repository.ProblemRepository;
@@ -15,12 +15,13 @@ import com.codeking.problemsubmissionservice.service.submitter.api.ProblemSubmis
 import com.codeking.problemsubmissionservice.service.submitter.dto.ProblemSubmissionRequest;
 import com.codeking.problemsubmissionservice.service.submitter.dto.ProblemSubmissionResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/submission")
@@ -64,11 +65,10 @@ public class ProblemSubmissionController {
 
 
     @GetMapping("/user/{userId}")
-    public List<UserSubmission> getUserSubmissions(@PathVariable("userId") String userId) {
-        return submissionRepository.findAllByUserId(userId)
-                .stream()
-                .map(this::createUserSubmission)
-                .collect(Collectors.toList());
+    public Page<UserSubmission> getUserSubmissions(@PathVariable("userId") String userId,
+                                                   @PageableDefault Pageable pageable) {
+        return submissionRepository.findAllByUserId(userId, pageable)
+                .map(this::createUserSubmission);
     }
 
     private UserSubmission createUserSubmission(Submission submission) {
