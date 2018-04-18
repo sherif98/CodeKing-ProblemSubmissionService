@@ -1,4 +1,4 @@
-package com.codeking.problemsubmissionservice.event.api;
+package com.codeking.problemsubmissionservice.event.send.api;
 
 import com.codeking.problemsubmissionservice.event.dto.ProblemEvaluatedEvent;
 

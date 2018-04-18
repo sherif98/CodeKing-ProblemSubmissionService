@@ -1,4 +1,4 @@
-package com.codeking.problemsubmissionservice.event.impl;
+package com.codeking.problemsubmissionservice.event.send.impl;
 
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;

@@ -5,7 +5,7 @@ import com.codeking.problemsubmissionservice.controller.dto.ProblemSubmission;
 import com.codeking.problemsubmissionservice.controller.dto.UserSubmission;
 import com.codeking.problemsubmissionservice.domain.Problem;
 import com.codeking.problemsubmissionservice.domain.Submission;
-import com.codeking.problemsubmissionservice.event.api.EventDispatcher;
+import com.codeking.problemsubmissionservice.event.send.api.EventDispatcher;
 import com.codeking.problemsubmissionservice.event.dto.ProblemEvaluatedEvent;
 import com.codeking.problemsubmissionservice.exception.ProblemNotFoundException;
 import com.codeking.problemsubmissionservice.exception.SubmissionNotFoundException;
